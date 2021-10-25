@@ -1,0 +1,38 @@
+.add-button {
+  width: 100%;
+  height: 50px;
+  margin-top: 36px;
+  background-image: url(../../images/plus_button.svg);
+  background-repeat: no-repeat;
+  background-size: 16px;
+  background-position: center;
+  background-color: transparent;
+  border-radius: 2px;
+  border: 2px solid white;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  opacity: 0.6;
+}
+
+@media screen and (min-width: 576px) {
+  .add-button {
+    -ms-grid-column: 1;
+        grid-column-start: 1;
+    -ms-grid-column-span: 3;
+    grid-column-end: 4;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .add-button {
+    margin-top: 0;
+    background-size: 22px;
+    width: 150px;
+    -ms-grid-column: 3;
+        grid-column-start: 3;
+  }
+}
