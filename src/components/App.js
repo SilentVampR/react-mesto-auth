@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import api from '../utils/api';
 import Header from './Header';
 import Main from './Main';
@@ -9,11 +10,14 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './addPlacePopup';
 import DeleteCardPopup from './DeleteCardPopup';
+import ProtectedRoute from './ProtectedRote';
+import Login from './Login';
+import Register from './Register';
 
 function App() {
 
   /* STATES */
-
+  const [loggedIn, setloggedIn] = useState(true);
   const [currentUser, setCurentUser] = useState({name: '', about : ''});
 
   const [cards, setCards] = useState([]);
@@ -164,51 +168,71 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
-      <Main
-        cards={cards}
-        onEditAvatar={handleEditAvatarClick}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-        onDeleteClick={handleDeleteClick}
-        onCardLike={handleCardLike}
-        onCardDelete={handleDeleteCard}
-      />
-      <Footer />
-      <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onClose={closeAllPopups}
-        onOverlayClick={handleOverlayClick}
-        onUpdateAvatar={handleUpdateAvatar}
-        isSended={isFormSended}
-      />
-      <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
-        onOverlayClick={handleOverlayClick}
-        onUpdateUser={handleUpdateUser}
-      />
-      <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-        onOverlayClick={handleOverlayClick}
-        onAddPlace={handleAddPlace}
-        isSended={isFormSended}
-      />
-      <DeleteCardPopup
-        isOpen={isConfirmPopupOpen}
-        onClose={closeAllPopups}
-        onOverlayClick={handleOverlayClick}
-        onCardDelete={handleDeleteCard}
-        deleteId={deleteId}
-      />
-      <ImagePopup
-        isOpen={isImagePopupOpen}
-        onClose={closeAllPopups}
-        card={selectedCard}
-        onOverlayClick={handleOverlayClick}
-      />
+      <Header loggedIn={loggedIn} userData={currentUser}/>
+      <main className="content">
+        <Switch>
+          <ProtectedRoute
+            component={Main}
+            path="/"
+            exact
+            loggedIn={loggedIn}
+            cards={cards}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onCardClick={handleCardClick}
+            onDeleteClick={handleDeleteClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleDeleteCard}
+          >
+
+            <EditProfilePopup
+              isOpen={isEditProfilePopupOpen}
+              onClose={closeAllPopups}
+              onOverlayClick={handleOverlayClick}
+              onUpdateUser={handleUpdateUser}
+            />
+            <AddPlacePopup
+              isOpen={isAddPlacePopupOpen}
+              onClose={closeAllPopups}
+              onOverlayClick={handleOverlayClick}
+              onAddPlace={handleAddPlace}
+              isSended={isFormSended}
+            />
+            <DeleteCardPopup
+              isOpen={isConfirmPopupOpen}
+              onClose={closeAllPopups}
+              onOverlayClick={handleOverlayClick}
+              onCardDelete={handleDeleteCard}
+              deleteId={deleteId}
+            />
+            <ImagePopup
+              isOpen={isImagePopupOpen}
+              onClose={closeAllPopups}
+              card={selectedCard}
+              onOverlayClick={handleOverlayClick}
+            />
+          </ProtectedRoute>
+          <ProtectedRoute
+              component={EditAvatarPopup}
+              path="/"
+              isOpen={isEditAvatarPopupOpen}
+              onClose={closeAllPopups}
+              onOverlayClick={handleOverlayClick}
+              onUpdateAvatar={handleUpdateAvatar}
+              isSended={isFormSended}
+            />
+          <Route
+            path="/login"
+            component={Login}
+          />
+          <Route
+            path="/register"
+            component={Register}
+          />
+        </Switch>
+        </main>
+        <Footer />
     </CurrentUserContext.Provider>
   );
 }

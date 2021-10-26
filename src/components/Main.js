@@ -5,7 +5,7 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
   return (
-    <main className="content">
+    <>
       <section className="profile">
         <div className="profile__avatar-container">
           <div className="profile__edit-avatar" onClick={props.onEditAvatar}></div>
@@ -23,7 +23,7 @@ function Main(props) {
           <Card card={item} onCardClick={props.onCardClick} onDeleteClick={props.onDeleteClick} key={item._id} onCardLike={props.onCardLike} />
         ))}
       </section>
-    </main>
+    </>
   );
 }
 

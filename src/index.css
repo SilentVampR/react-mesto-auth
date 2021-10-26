@@ -33,9 +33,14 @@
 @import url(./blocks/popup/__image/popup__image.css);
 @import url(./blocks/popup/__image-caption/popup__image-caption.css);
 
-/* HEADER + LOGO */
+/* HEADER  */
 @import url(./blocks/header/header.css);
 @import url(./blocks/logo/logo.css);
+@import url(./blocks/header/__nav/header__nav.css);
+@import url(./blocks/header/__user-info/header__user-info.css);
+@import url(./blocks/header/__nav-link/header__nav-link.css);
+@import url(./blocks/header/__nav-link/_type/header__nav-link_type_logout.css);
+
 
 /* PROFILE */
 @import url(./blocks/profile/profile.css);
