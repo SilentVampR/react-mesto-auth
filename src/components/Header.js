@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 
-function Header({userData, loggedIn}) {
+function Header({ userData, loggedIn, onSwitchClick, onClick, onSignOut }) {
 
   const [linkProps, setLinkProps] = useState({
-    path : '/sign-in',
-    linkName : 'Войти'
+    path: '/sign-up',
+    linkName: 'Зарегистрироваться'
   })
-
-  /*const history = useHistory();
-  const [locationChanged, setLocationChanged] = useState(false);
-
-  // useEffect(()=>{
-  //   console.log('Что-то изменилось')
-  // }, [history]);
-
-  history.listen(() => {
-    setLocationChanged(true);
-  });
-
+  const [userEmail, setUserEmail] = useState('');
+  const history = useHistory();
   const currentPath = history.location.pathname;
-  if(locationChanged){
-    if(loggedIn){
+
+  useEffect(() => {
+    if (loggedIn) {
+      setUserEmail(userData.email);
+      console.log(userData);
       setLinkProps({
         ...linkProps,
         linkName: 'Выйти',
         path: '/sign-out'
       })
     } else {
-      if(currentPath === '/sign-in') {
+      if (currentPath === '/sign-up') {
+        setLinkProps({
+          ...linkProps,
+          linkName: 'Войти',
+          path: '/sign-in'
+        })
+      } else {
         setLinkProps({
           ...linkProps,
           linkName: 'Зарегистрироваться',
@@ -36,15 +35,20 @@ function Header({userData, loggedIn}) {
         })
       }
     }
-    setLocationChanged(false);
-  }*/
+  }, [onSwitchClick, loggedIn])
 
   return (
     <header className="header">
       <div className="logo"></div>
       <div className="header__nav">
-        <span className="header__user-info">{loggedIn ? userData.name : ''}</span>
-        <Link to={linkProps.path} className={`header__nav-link${loggedIn ? ' header__nav-link_type_logout' : ''}`}>{linkProps.linkName}</Link>
+        <span className="header__user-info">{userEmail}</span>
+        <Link
+          to={linkProps.path}
+          onClick={onClick}
+          className={`header__nav-link${loggedIn ? ' header__nav-link_type_logout' : ''}`}
+        >
+          {linkProps.linkName}
+        </Link>
       </div>
     </header>
   );

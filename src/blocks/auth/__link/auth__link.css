@@ -1,0 +1,12 @@
+.auth__link {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  color: white;
+}
+
+.auth__link:hover {
+  text-decoration: none;
+  color: white;
+}

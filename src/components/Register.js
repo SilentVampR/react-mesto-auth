@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import * as auth from '../auth.js';
 
-function Register({ loggedIn }) {
+function Register({ onSignUp, loggedIn, onClick }) {
+
   const [data, setData] = useState({
     email: '',
     password: '',
     error: ''
   })
 
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    console.log(data);
+  if(loggedIn) {
+    return <Redirect to="./"/>
   }
 
   const handleChange = (e) => {
@@ -21,9 +20,13 @@ function Register({ loggedIn }) {
       [name]: value
     });
   }
-  if(loggedIn) {
-    return <Redirect to="./"/>
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    const { email, password } = data;
+    onSignUp({ email, password });
   }
+
   return(
     <div className="auth">
       <h1 className="auth__title">Регистрация</h1>
@@ -32,7 +35,7 @@ function Register({ loggedIn }) {
         <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} placeholder="Пароль" />
         <button type="submit" onSubmit={handleSubmit} className="auth__button">Зарегистрироваться</button>
       </form>
-      <p className="auth__text">Уже зарегистрированы? <Link to="/sign-in" className="auth__link">Войти</Link></p>
+      <p className="auth__text">Уже зарегистрированы? <Link to="/sign-in" className="auth__link" onClick={onClick}>Войти</Link></p>
     </div>
   )
 }

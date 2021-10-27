@@ -1,33 +1,40 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import * as auth from '../auth.js';
 
-function Login({ loggedIn }) {
+
+function Login({ loggedIn, onSignIn, onClick }) {
   const [data, setData] = useState({
-    username: '',
+    email: '',
     password: '',
   })
 
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-
-  }
-
-  const handleChange = (e) => {
-    //setData(e.target);
-  }
   if(loggedIn) {
     return <Redirect to="./"/>
   }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value
+    })
+  }
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    const { email, password } = data;
+    onSignIn({ email, password });
+  }
+
   return(
     <div className="auth">
       <h1 className="auth__title">Вход</h1>
       <form onSubmit={handleSubmit} className="auth__form">
-        <input className="auth__input" required name="username" type="text" value={data.username} onChange={handleChange} />
-        <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} />
+        <input className="auth__input" required name="email" type="email" value={data.email} onChange={handleChange} placeholder="Email" />
+        <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} placeholder="Пароль" />
         <button type="submit" onSubmit={handleSubmit} className="auth__button">Войти</button>
       </form>
-      <p className="auth__text">Ещё не зарегистрированы? <Link to="/sign-up" className="auth__link">Зарегистрироваться</Link></p>
+      <p className="auth__text">Ещё не зарегистрированы? <Link to="/sign-up" className="auth__link" onClick={onClick}>Зарегистрироваться</Link></p>
     </div>
   )
 }
