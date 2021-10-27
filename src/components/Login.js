@@ -1,31 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import * as auth from '../auth.js';
 
-function Login() {
-  return(
-    <div className="login">
-      <p className="login__welcome">
-        Добро пожаловать!
-      </p>
-      <form onSubmit={this.handleSubmit} className="login__form">
-        <label htmlFor="username">
-          Логин:
-        </label>
-        <input required id="username" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
-        <label htmlFor="password">
-          Пароль:
-        </label>
-        <input required id="password" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
-        <div className="login__button-container">
-          <button type="submit" onSubmit={this.handleSubmit} className="login__link">Войти</button>
-        </div>
-      </form>
+function Login({ loggedIn }) {
+  const [data, setData] = useState({
+    username: '',
+    password: '',
+  })
 
-      <div className="login__signup">
-        <p>Ещё не зарегистрированы?</p>
-        <Link to="/register" className="signup__link">Зарегистрироваться</Link>
-      </div>
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+
+  }
+
+  const handleChange = (e) => {
+    //setData(e.target);
+  }
+  if(loggedIn) {
+    return <Redirect to="./"/>
+  }
+  return(
+    <div className="auth">
+      <h1 className="auth__title">Вход</h1>
+      <form onSubmit={handleSubmit} className="auth__form">
+        <input className="auth__input" required name="username" type="text" value={data.username} onChange={handleChange} />
+        <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} />
+        <button type="submit" onSubmit={handleSubmit} className="auth__button">Войти</button>
+      </form>
+      <p className="auth__text">Ещё не зарегистрированы? <Link to="/sign-up" className="auth__link">Зарегистрироваться</Link></p>
     </div>
   )
 }

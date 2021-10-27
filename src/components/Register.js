@@ -1,31 +1,38 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import * as auth from '../auth.js';
 
-function Register() {
-  return(
-    <div className="login">
-      <p className="login__welcome">
-        Добро пожаловать!
-      </p>
-      <form onSubmit={this.handleSubmit} className="login__form">
-        <label htmlFor="username">
-          Логин:
-        </label>
-        <input required id="username" name="username" type="text" value={this.state.username} onChange={this.handleChange} />
-        <label htmlFor="password">
-          Пароль:
-        </label>
-        <input required id="password" name="password" type="password" value={this.state.password} onChange={this.handleChange} />
-        <div className="login__button-container">
-          <button type="submit" onSubmit={this.handleSubmit} className="login__link">Войти</button>
-        </div>
-      </form>
+function Register({ loggedIn }) {
+  const [data, setData] = useState({
+    email: '',
+    password: '',
+    error: ''
+  })
 
-      <div className="login__signup">
-        <p>Ещё не зарегистрированы?</p>
-        <Link to="/register" className="signup__link">Зарегистрироваться</Link>
-      </div>
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    console.log(data);
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({
+      ...data,
+      [name]: value
+    });
+  }
+  if(loggedIn) {
+    return <Redirect to="./"/>
+  }
+  return(
+    <div className="auth">
+      <h1 className="auth__title">Регистрация</h1>
+      <form onSubmit={handleSubmit} className="auth__form">
+        <input className="auth__input" required name="email" type="email" value={data.username} onChange={handleChange} placeholder="Email" />
+        <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} placeholder="Пароль" />
+        <button type="submit" onSubmit={handleSubmit} className="auth__button">Зарегистрироваться</button>
+      </form>
+      <p className="auth__text">Уже зарегистрированы? <Link to="/sign-in" className="auth__link">Войти</Link></p>
     </div>
   )
 }

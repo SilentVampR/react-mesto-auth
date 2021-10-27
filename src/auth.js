@@ -1,5 +1,9 @@
 export const BASE_URL = 'https://api.nomoreparties.co';
 
+const checkResponse = (res) => {
+  return res.ok ? res.json() : Promise.reject(`Ошибка обработки запроса: ${res.statusText}`);
+}
+
 export const register = (username, password, email) => {
   return fetch(`${BASE_URL}/auth/local/register`, {
     method: 'POST',
@@ -9,10 +13,9 @@ export const register = (username, password, email) => {
     },
     body: JSON.stringify({username, password, email})
   })
-  .then((response) => {
-    return response.json();
-  })  
+  .then(checkResponse)
 };
+
 export const authorize = (identifier, password) => {
   return fetch(`${BASE_URL}/auth/local`, {
     method: 'POST',
@@ -22,7 +25,7 @@ export const authorize = (identifier, password) => {
     },
     body: JSON.stringify({identifier, password})
   })
-  .then((response => response.json()))
+  .then(checkResponse)
 };
 
 export const checkToken = (token) => {
@@ -34,6 +37,5 @@ export const checkToken = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-  .then(res => res.json())
-  .then(data => data)
+  .then(checkResponse)
 }

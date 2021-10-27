@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import api from '../utils/api';
 import Header from './Header';
 import Main from './Main';
@@ -11,13 +11,14 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './addPlacePopup';
 import DeleteCardPopup from './DeleteCardPopup';
 import ProtectedRoute from './ProtectedRote';
+import ProtectedComponent from './ProtectedComponent';
 import Login from './Login';
 import Register from './Register';
 
 function App() {
 
   /* STATES */
-  const [loggedIn, setloggedIn] = useState(true);
+  const [loggedIn, setloggedIn] = useState(false);
   const [currentUser, setCurentUser] = useState({name: '', about : ''});
 
   const [cards, setCards] = useState([]);
@@ -38,9 +39,16 @@ function App() {
 
   const [isFormSended, setIsFormSended] = useState(false);
 
-  /* USER INFO */
-
+  /* USER INFO + CARDS */
   useEffect(() => {
+    Promise.all([api.getUserInfo(), api.getInitialCards()])
+    .then(([userData, initialCards]) => {
+      setCurentUser(userData);
+      setCards(initialCards)
+    })
+    .catch(err => console.log(`Ошибка загрузки данных: ${err}`))
+  }, []);
+  /*useEffect(() => {
     api.getUserInfo()
     .then(res => setCurentUser(res))
     .catch(err => {
@@ -50,13 +58,13 @@ function App() {
 
   /* CARDS */
 
-  useEffect(() => {
+  /*useEffect(() => {
     api.getInitialCards()
     .then(res => setCards(res))
     .catch(err => {
       console.log(err);
     });
-  }, [])
+  }, [])*/
 
   const handleCardLike = (card) => {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -164,11 +172,11 @@ function App() {
   }
 
   /* END ALL POPUPS */
-
+  console.log(loggedIn);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header loggedIn={loggedIn} userData={currentUser}/>
+      <Header loggedIn={loggedIn}/>
       <main className="content">
         <Switch>
           <ProtectedRoute
@@ -185,54 +193,59 @@ function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleDeleteCard}
           >
-
-            <EditProfilePopup
-              isOpen={isEditProfilePopupOpen}
-              onClose={closeAllPopups}
-              onOverlayClick={handleOverlayClick}
-              onUpdateUser={handleUpdateUser}
-            />
-            <AddPlacePopup
-              isOpen={isAddPlacePopupOpen}
-              onClose={closeAllPopups}
-              onOverlayClick={handleOverlayClick}
-              onAddPlace={handleAddPlace}
-              isSended={isFormSended}
-            />
-            <DeleteCardPopup
-              isOpen={isConfirmPopupOpen}
-              onClose={closeAllPopups}
-              onOverlayClick={handleOverlayClick}
-              onCardDelete={handleDeleteCard}
-              deleteId={deleteId}
-            />
-            <ImagePopup
-              isOpen={isImagePopupOpen}
-              onClose={closeAllPopups}
-              card={selectedCard}
-              onOverlayClick={handleOverlayClick}
-            />
           </ProtectedRoute>
-          <ProtectedRoute
-              component={EditAvatarPopup}
-              path="/"
-              isOpen={isEditAvatarPopupOpen}
-              onClose={closeAllPopups}
-              onOverlayClick={handleOverlayClick}
-              onUpdateAvatar={handleUpdateAvatar}
-              isSended={isFormSended}
-            />
-          <Route
-            path="/login"
-            component={Login}
-          />
-          <Route
-            path="/register"
-            component={Register}
-          />
+          <Route path="/sign-in" exact>
+            <Login loggedIn={loggedIn} />
+          </Route>
+          <Route path="/sign-up"exact>
+            <Register loggedIn={loggedIn}/>
+          </Route>
         </Switch>
         </main>
         <Footer />
+        <ProtectedComponent
+          component={EditAvatarPopup}
+          loggedIn={loggedIn}
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onOverlayClick={handleOverlayClick}
+          onUpdateAvatar={handleUpdateAvatar}
+          isSended={isFormSended}
+        />
+        <ProtectedComponent
+          component={EditProfilePopup}
+          loggedIn={loggedIn}
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onOverlayClick={handleOverlayClick}
+          onUpdateUser={handleUpdateUser}
+        />
+        <ProtectedComponent
+          component={AddPlacePopup}
+          isOpen={isAddPlacePopupOpen}
+          loggedIn={loggedIn}
+          onClose={closeAllPopups}
+          onOverlayClick={handleOverlayClick}
+          onAddPlace={handleAddPlace}
+          isSended={isFormSended}
+        />
+        <ProtectedComponent
+          component={DeleteCardPopup}
+          loggedIn={loggedIn}
+          isOpen={isConfirmPopupOpen}
+          onClose={closeAllPopups}
+          onOverlayClick={handleOverlayClick}
+          onCardDelete={handleDeleteCard}
+          deleteId={deleteId}
+        />
+        <ProtectedComponent
+          component={ImagePopup}
+          loggedIn={loggedIn}
+          isOpen={isImagePopupOpen}
+          onClose={closeAllPopups}
+          card={selectedCard}
+          onOverlayClick={handleOverlayClick}
+        />
     </CurrentUserContext.Provider>
   );
 }
