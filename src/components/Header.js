@@ -14,13 +14,13 @@ function Header({ userData, loggedIn, onSwitchClick, onClick, onSignOut }) {
   useEffect(() => {
     if (loggedIn) {
       setUserEmail(userData.email);
-      console.log(userData);
       setLinkProps({
         ...linkProps,
         linkName: 'Выйти',
-        path: '/sign-out'
+        path: '/sign-in'
       })
     } else {
+      setUserEmail('');
       if (currentPath === '/sign-up') {
         setLinkProps({
           ...linkProps,
@@ -44,7 +44,7 @@ function Header({ userData, loggedIn, onSwitchClick, onClick, onSignOut }) {
         <span className="header__user-info">{userEmail}</span>
         <Link
           to={linkProps.path}
-          onClick={onClick}
+          onClick={loggedIn ? onSignOut : onClick}
           className={`header__nav-link${loggedIn ? ' header__nav-link_type_logout' : ''}`}
         >
           {linkProps.linkName}

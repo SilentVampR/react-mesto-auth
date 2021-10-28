@@ -62,6 +62,8 @@ function App() {
 
   const [switcher, setSwitcher] = useState(false);
 
+  /* Функция переключения страниц вход и регистрация */
+
   const handleSwitchFormClick = () => {
     setSwitcher(!switcher);
   }
@@ -76,35 +78,15 @@ function App() {
       .catch(err => console.log(`Ошибка загрузки данных: ${err}`))
   }, []);
 
-  const showResponseError = (text, error) => {
+  /* END USER INFO + CARDS */
+
+  const handleResponseError = (text, error) => {
     console.log(`${text}. Статус: ${error}`);
   }
+
   const history = useHistory();
 
-  const handleSignIn = ({ email, password }) => {
-    auth.signIn({ email, password })
-      .then((res) => {
-        if (res.token) {
-          const { token } = res
-          localStorage.setItem('token', token);
-          console.log(email);
-          setUserData({
-            email: email
-          })
-          setloggedIn(true);
-          setSwitcher(!switcher);
-        }
-      })
-      .catch(err => {
-        if (err === 400) {
-          showResponseError('Не заполнено одно из полей', err);
-        } else if (err === 401) {
-          showResponseError('Неверно указан email или пароль', err);
-        } else {
-          showResponseError('Ошибка обработки запроса', err);
-        }
-      })
-  }
+  /* РЕГИСТРАЦИЯ */
 
   const handleSignUp = ({ email, password }) => {
     auth.signUp({ email, password })
@@ -117,7 +99,7 @@ function App() {
         });
       })
       .catch(err => {
-        showResponseError('Некорректно заполнено одно из полей', err);
+        handleResponseError('Некорректно заполнено одно из полей', err);
         setIsInfoTooltipPopupOpen({
           opened: true,
           error: true,
@@ -126,15 +108,77 @@ function App() {
       })
   }
 
-  const handleLogout = () => {
+  /* ВХОД */
+
+  const handleSignIn = ({ email, password }) => {
+    auth.signIn({ email, password })
+      .then((res) => {
+        if (res.token) {
+          const { token } = res
+          localStorage.setItem('token', token);
+          setUserData({
+            email: email
+          })
+          setloggedIn(true);
+          setSwitcher(!switcher);
+        }
+      })
+      .catch(err => {
+        if (err === 400) {
+          handleResponseError('Не заполнено одно из полей', err);
+        } else if (err === 401) {
+          handleResponseError('Неверно указан email или пароль', err);
+        } else {
+          handleResponseError('Ошибка обработки запроса', err);
+        }
+      })
+  }
+
+  /* ВЫХОД */
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
     setloggedIn(false);
   }
 
-  const tokenCheck = () => {
-    if (localStorage.getItem('token')) {
+  /* ПЕРЕХОД НА ГЛАВНУЮ */
+  useEffect(() => {
+    if(loggedIn === true) {
+      history.push("/");
+    }
+  },[loggedIn]);
 
+  /* ПРОВЕРКА ТОКЕНА */
+
+  useEffect(() => {
+    tokenCheck();
+  },[])
+
+  const tokenCheck = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      auth.getUserData(token)
+        .then(res => {
+          if (res) {
+            const userData = {
+              email: res.data.email
+            }
+            setUserData(userData);
+            setloggedIn(true);
+          }
+        })
+        .catch(err => {
+          if (err === 400) {
+            handleResponseError('Токен не передан или передан не в том формате', err);
+          } else if (err === 401) {
+            handleResponseError('Переданный токен некорректен', err);
+          } else {
+            handleResponseError('Ошибка обработки запроса', err);
+          }
+        });
     }
   }
+
+  /* ЛАЙК КАРТОЧКИ */
 
   const handleCardLike = (card) => {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -145,6 +189,8 @@ function App() {
       .catch(err => console.log(err));
   }
 
+  /* УДАЛЕНИЕ КАРТОЧКИ */
+
   const handleDeleteCard = (id) => {
     api.removeCard(id)
       .then(() => {
@@ -153,8 +199,6 @@ function App() {
       .catch(err => console.log(err));
     closeAllPopups();
   }
-
-  /* END CARDS */
 
   /* AVATAR */
 
@@ -251,6 +295,7 @@ function App() {
         userData={userData}
         onSwitchClick={switcher}
         onClick={handleSwitchFormClick}
+        onSignOut={handleSignOut}
       />
       <main className="content">
         <Switch>
