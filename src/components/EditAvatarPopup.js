@@ -6,15 +6,10 @@ function EditAvatarPopup(props) {
   const avatarUrlInput = React.useRef();
 
   React.useEffect(() => {
-    if(props.isSended === true)
-    {
+    if (props.isSended === true) {
       avatarUrlInput.current.value = ''
     }
-  },[props.isSended]);
-
-  const handleOnChange = () => {
-
-  }
+  }, [props.isSended]);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -32,7 +27,7 @@ function EditAvatarPopup(props) {
       onSubmit={handleOnSubmit}
     >
       <div className="popup__input-container">
-        <input type="url" name="avatarUrl" className="popup__input popup__avatar-url" placeholder="Ссылка на изображение" ref={avatarUrlInput} onChange={handleOnChange} required />
+        <input type="url" name="avatarUrl" className="popup__input popup__avatar-url" placeholder="Ссылка на изображение" ref={avatarUrlInput} required />
         <span className="popup__text-error"></span>
       </div>
     </PopupWithForm>

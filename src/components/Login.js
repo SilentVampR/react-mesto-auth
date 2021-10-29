@@ -32,7 +32,7 @@ function Login({ loggedIn, onSignIn, onClick }) {
       <form onSubmit={handleSubmit} className="auth__form">
         <input className="auth__input" required name="email" type="email" value={data.email} onChange={handleChange} placeholder="Email" />
         <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} placeholder="Пароль" />
-        <button type="submit" onSubmit={handleSubmit} className="auth__button">Войти</button>
+        <button type="submit" className="auth__button">Войти</button>
       </form>
       <p className="auth__text">Ещё не зарегистрированы? <Link to="/sign-up" className="auth__link" onClick={onClick}>Зарегистрироваться</Link></p>
     </div>

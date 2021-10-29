@@ -33,7 +33,7 @@ function Register({ onSignUp, loggedIn, onClick }) {
       <form onSubmit={handleSubmit} className="auth__form">
         <input className="auth__input" required name="email" type="email" value={data.username} onChange={handleChange} placeholder="Email" />
         <input className="auth__input" required name="password" type="password" value={data.password} onChange={handleChange} placeholder="Пароль" />
-        <button type="submit" onSubmit={handleSubmit} className="auth__button">Зарегистрироваться</button>
+        <button type="submit" className="auth__button">Зарегистрироваться</button>
       </form>
       <p className="auth__text">Уже зарегистрированы? <Link to="/sign-in" className="auth__link" onClick={onClick}>Войти</Link></p>
     </div>

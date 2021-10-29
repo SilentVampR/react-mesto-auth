@@ -8,14 +8,14 @@ import ImagePopup from './ImagePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
-import AddPlacePopup from './addPlacePopup';
+import AddPlacePopup from './AddPlacePopup';
 import InfoTooltip from './InfoTooltip';
 import DeleteCardPopup from './DeleteCardPopup';
 import ProtectedRoute from './ProtectedRote';
 import ProtectedComponent from './ProtectedComponent';
 import Login from './Login';
 import Register from './Register';
-import * as auth from '../auth.js';
+import * as auth from '../utils/auth.js';
 
 function App() {
 
@@ -142,16 +142,16 @@ function App() {
 
   /* ПЕРЕХОД НА ГЛАВНУЮ */
   useEffect(() => {
-    if(loggedIn === true) {
+    if (loggedIn === true) {
       history.push("/");
     }
-  },[loggedIn]);
+  }, [loggedIn]);
 
   /* ПРОВЕРКА ТОКЕНА */
 
   useEffect(() => {
     tokenCheck();
-  },[])
+  }, [])
 
   const tokenCheck = () => {
     const token = localStorage.getItem('token');
@@ -178,6 +178,20 @@ function App() {
     }
   }
 
+
+  useEffect(() => {
+    const closeByEscape = (evt) => {
+      if (evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+
+    document.addEventListener('keydown', closeByEscape)
+
+    return () => document.removeEventListener('keydown', closeByEscape)
+  }, [])
+
+
   /* ЛАЙК КАРТОЧКИ */
 
   const handleCardLike = (card) => {
@@ -195,9 +209,9 @@ function App() {
     api.removeCard(id)
       .then(() => {
         setCards(cards => cards.filter((state) => state._id !== id))
+        closeAllPopups();
       })
       .catch(err => console.log(err));
-    closeAllPopups();
   }
 
   /* AVATAR */
