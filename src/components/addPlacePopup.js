@@ -4,16 +4,14 @@ import PopupWithForm from "./PopupWithForm";
 function AddPlacePopup(props) {
 
   const [name, setName] = React.useState('');
-
   const [link, setLink] = React.useState('');
 
   React.useEffect(() => {
-    if(props.isSended === true)
-    {
+    if (props.isSended === true) {
       setName('');
       setLink('');
     }
-  },[props.isSended]);
+  }, [props.isSended]);
 
   const handleOnChangeName = (e) => {
     setName(e.target.value);
