@@ -76,7 +76,7 @@ function App() {
         setCards(initialCards.data);
       })
       .catch(err => console.log(`Ошибка загрузки данных: ${err}`))
-  }, []);
+  }, [loggedIn]);
 
   /* END USER INFO + CARDS */
 
@@ -131,7 +131,6 @@ function App() {
 
   /* ВЫХОД */
   const handleSignOut = () => {
-    // localStorage.removeItem('token');
     auth.signOut();
     setloggedIn(false);
   }
@@ -145,34 +144,6 @@ function App() {
 
   /* ПРОВЕРКА АВТОРИЗАЦИИ */
 
-  /* useEffect(() => {
-    tokenCheck();
-  }, [])
-
-  const tokenCheck = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      auth.getUserData(token)
-        .then(res => {
-          if (res) {
-            const userData = {
-              email: res.data.email
-            }
-            setUserData(userData);
-            setloggedIn(true);
-          }
-        })
-        .catch(err => {
-          if (err === 400) {
-            handleResponseError('Токен не передан или передан не в том формате', err);
-          } else if (err === 401) {
-            handleResponseError('Переданный токен некорректен', err);
-          } else {
-            handleResponseError('Ошибка обработки запроса (проверка токена)', err);
-          }
-        });
-    }
-  } */
   useEffect(() => {
     authCheck();
   }, [])
@@ -180,10 +151,9 @@ function App() {
   const authCheck = () => {
     auth.getUserData()
       .then(res => {
-        const userData = {
+        setUserData({
           email: res.data.email
-        }
-        setUserData(userData);
+        });
         setloggedIn(true);
       })
       .catch(err => {
