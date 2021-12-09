@@ -1,4 +1,4 @@
-import { apiToken, yandexMestoApiURL } from './utils';
+import { BASE_URL } from './auth';
 
 class Api {
   constructor({apiURL, headers}){
@@ -15,7 +15,8 @@ class Api {
 
   getUserInfo() {
     return fetch(`${this._apiURL}/users/me`, {
-      headers: this._headers
+      credentials: 'include',
+      headers: this._headers,
     })
     .then(res => {
       return this._checkResponse(res, 'Ошибка получения информации о пользователе с сервера');
@@ -24,7 +25,8 @@ class Api {
 
   getInitialCards() {
     return fetch(this._apiURL + '/cards/', {
-      headers: this._headers
+      credentials: 'include',
+      headers: this._headers,
     })
       .then(res => {
         return this._checkResponse(res, 'Ошибка получения карточек с сервера');
@@ -34,6 +36,7 @@ class Api {
   addNewPlace(data) {
     return fetch(this._apiURL + '/cards', {
       method: 'POST',
+      credentials: 'include',
       body: JSON.stringify({
         name: data.name,
         link: data.link,
@@ -48,6 +51,7 @@ class Api {
   removeCard(id) {
     return fetch(this._apiURL + '/cards/' + id, {
       method: 'DELETE',
+      credentials: 'include',
       headers: this._headers
     })
       .then(res => {
@@ -56,10 +60,11 @@ class Api {
   }
 
   changeLikeCardStatus(id, isLiked) {
-    const url = this._apiURL + '/cards/likes/' + id
+    const url = this._apiURL + '/cards/' + id + '/likes'
     const methodName = isLiked ? 'PUT' : 'DELETE';
     return fetch(url, {
       method: methodName,
+      credentials: 'include',
       headers: this._headers
     })
     .then(res => {
@@ -70,6 +75,7 @@ class Api {
   editAvatar(url) {
     return fetch(this._apiURL + '/users/me/avatar', {
       method: 'PATCH',
+      credentials: 'include',
       body: JSON.stringify({
         avatar: url
       }),
@@ -83,6 +89,7 @@ class Api {
   editUserInfo(data) {
     return fetch(this._apiURL + '/users/me', {
       method: 'PATCH',
+      credentials: 'include',
       body: JSON.stringify({
         name: data.name,
         about: data.about
@@ -94,8 +101,7 @@ class Api {
     })
   }
 }
-const api = new Api({ apiURL:yandexMestoApiURL, headers: {
-  authorization: apiToken,
+const api = new Api({ apiURL:BASE_URL, headers: {
   'Content-Type': 'application/json; charset=UTF-8'
 } });
 export default api;

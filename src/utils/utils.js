@@ -1,5 +1,5 @@
-export const apiToken = "beb35b1a-7d6a-4743-95a3-06e29b783755";
-export const yandexMestoApiURL = `https://mesto.nomoreparties.co/v1/cohort-27`;
+// export const apiToken = "beb35b1a-7d6a-4743-95a3-06e29b783755";
+// export const yandexMestoApiURL = `https://mesto.nomoreparties.co/v1/cohort-27`;
 
 export const classNamesSettings = {
   formSelector: '.popup__form-container',

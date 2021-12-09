@@ -17,15 +17,18 @@ function Card(props) {
   const countLikes = card.likes.length;
 
   const isLiked = card.likes.some(i => i._id === currentUser._id);
+  console.log(isLiked);
 
   const likeButtonClassName = `card__like-button${isLiked ? ' card__like-button_active' : ''}`
 
   const isOwn = card.owner._id === currentUser._id;
+  console.log(card);
+  console.log(card.owner._id);
+  console.log(currentUser._id);
 
   const cardDeleteButtonClassName = (
     `card__delete-button${isOwn ? ' card__delete-button_active' : ''}`
   );
-
   return (
     <div className="card">
       <img src={card.link} alt={card.name} className="card__image" onClick={() => handleImageClick(card)} />

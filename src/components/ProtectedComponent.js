@@ -1,5 +1,4 @@
 import React from 'react';
-import { Route } from "react-router-dom";
 
 const ProtectedComponent = ({ component: Component, ...props  }) => {
   return (

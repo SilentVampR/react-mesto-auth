@@ -72,8 +72,8 @@ function App() {
   useEffect(() => {
     Promise.all([api.getUserInfo(), api.getInitialCards()])
       .then(([userData, initialCards]) => {
-        setCurentUser(userData);
-        setCards(initialCards)
+        setCurentUser(userData.data);
+        setCards(initialCards.data);
       })
       .catch(err => console.log(`Ошибка загрузки данных: ${err}`))
   }, []);
@@ -109,19 +109,14 @@ function App() {
   }
 
   /* ВХОД */
-
   const handleSignIn = ({ email, password }) => {
     auth.signIn({ email, password })
       .then((res) => {
-        if (res.token) {
-          const { token } = res
-          localStorage.setItem('token', token);
-          setUserData({
-            email: email
-          })
-          setloggedIn(true);
-          setSwitcher(!switcher);
-        }
+        setUserData({
+          email: res.email
+        })
+        setloggedIn(true);
+        setSwitcher(!switcher);
       })
       .catch(err => {
         if (err === 400) {
@@ -129,14 +124,15 @@ function App() {
         } else if (err === 401) {
           handleResponseError('Неверно указан email или пароль', err);
         } else {
-          handleResponseError('Ошибка обработки запроса', err);
+          handleResponseError('Ошибка обработки запроса (попытка авторизации)', err);
         }
       })
   }
 
   /* ВЫХОД */
   const handleSignOut = () => {
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
+    auth.signOut();
     setloggedIn(false);
   }
 
@@ -147,9 +143,9 @@ function App() {
     }
   }, [loggedIn]);
 
-  /* ПРОВЕРКА ТОКЕНА */
+  /* ПРОВЕРКА АВТОРИЗАЦИИ */
 
-  useEffect(() => {
+  /* useEffect(() => {
     tokenCheck();
   }, [])
 
@@ -172,12 +168,35 @@ function App() {
           } else if (err === 401) {
             handleResponseError('Переданный токен некорректен', err);
           } else {
-            handleResponseError('Ошибка обработки запроса', err);
+            handleResponseError('Ошибка обработки запроса (проверка токена)', err);
           }
         });
     }
-  }
+  } */
+  useEffect(() => {
+    authCheck();
+  }, [])
 
+  const authCheck = () => {
+    auth.getUserData()
+      .then(res => {
+        const userData = {
+          email: res.data.email
+        }
+        setUserData(userData);
+        setloggedIn(true);
+      })
+      .catch(err => {
+        if (err === 400) {
+          handleResponseError('Куки не установлены', err);
+        } else if (err === 401) {
+          handleResponseError('Ошибка авторизации', err);
+        } else {
+          handleResponseError('Ошибка обработки запроса (проверка авторизации)', err);
+        }
+      });
+
+  }
 
   useEffect(() => {
     const closeByEscape = (evt) => {
@@ -198,7 +217,7 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        setCards((state) => state.map((c) => c._id === card._id ? newCard.data : c));
       })
       .catch(err => console.log(err));
   }
@@ -223,7 +242,7 @@ function App() {
 
   const handleUpdateAvatar = (url) => {
     api.editAvatar(url)
-      .then(res => setCurentUser(res))
+      .then(res => setCurentUser(res.data))
       .then(() => closeAllPopups())
       .then(() => setIsFormSended(true))
       .catch(err => console.log(err));
@@ -240,7 +259,7 @@ function App() {
 
   const handleUpdateUser = (data) => {
     api.editUserInfo(data)
-      .then(res => setCurentUser(res))
+      .then(res => setCurentUser(res.data))
       .then(() => closeAllPopups())
       .catch(err => console.log(err));
   }
@@ -256,7 +275,7 @@ function App() {
 
   const handleAddPlace = (data) => {
     api.addNewPlace(data)
-      .then(res => setCards([res, ...cards]))
+      .then(res => setCards([res.data, ...cards]))
       .then(() => closeAllPopups())
       .then(() => setIsFormSended(true))
       .catch(err => console.log(err));
