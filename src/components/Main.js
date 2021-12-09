@@ -4,13 +4,6 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
-  /* const renderCard = (cardsList) => {
-    if(cardsList.length > 0) {
-      cardsList.map((item) => (
-        <Card card={item} onCardClick={props.onCardClick} onDeleteClick={props.onDeleteClick} key={item._id} onCardLike={props.onCardLike} />
-      ))
-    }
-  } */
   return (
     <>
       <section className="profile">
@@ -26,8 +19,7 @@ function Main(props) {
         <button className="add-button" type="button" onClick={props.onAddPlace}></button>
       </section>
       <section className="cards">
-        {// renderCard(props.cards)
-        props.cards.map((item) => (
+        {props.cards.map((item) => (
           <Card card={item} onCardClick={props.onCardClick} onDeleteClick={props.onDeleteClick} key={item._id} onCardLike={props.onCardLike} />
         ))}
       </section>
